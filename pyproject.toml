@@ -1,7 +1,14 @@
 [project]
-name = "enode-fund"
+name = "enode-quant"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
+
+[project.scripts]
+enode = "enode_quant.cli.login:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
