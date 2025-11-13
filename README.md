@@ -1,9 +1,10 @@
 # 📦 Enode Quant SDK
 
 **Author:** Oscar Thiele Serrano
+
 **Context:** ESADE ENODE Association – Quant Finance Team (student quant fund)
 
-A lightweight, beginner-friendly Python SDK for accessing Enode’s internal **market data** (stocks, options, and candles) stored in our AWS RDS PostgreSQL database.
+A lightweight, beginner-friendly Python SDK for accessing Enode's internal **market data** (stocks, options, and candles) stored in our AWS RDS PostgreSQL database.
 
 This library is for **our team**: it standardises how we fetch data for research, prototyping, and strategy development.
 
@@ -21,102 +22,96 @@ get_option_contracts("AAPL", option_type="call")
 get_stock_candles("AAPL")
 ```
 
-
-
-
 The SDK provides:
 
-High-level Python functions for stocks, options, and candles
-
-A built-in CLI for authentication (enode login)
-
-Secure local credential storage
-
-SQL query builders (users never write SQL)
-
-Optional pandas DataFrame output
-
-Clean error handling and a simple API surface
+- High-level Python functions for stocks, options, and candles
+- A built-in CLI for authentication (`enode login`)
+- Secure local credential storage
+- SQL query builders (users never write SQL)
+- Optional pandas DataFrame output
+- Clean error handling and a simple API surface
 
 Designed to be usable by both beginners and more advanced quants in the ENODE team.
 
+---
 
+## 🌳 Project Structure
 
-🌳 Project Structure
-
-
+```
 enode_quant/
 ├── api/               # High-level data access
-│   ├── candles.py     # Candle/OHLCV helpers
+│   ├── candles.py     # Candle/OHLCV-related helpers
 │   ├── options.py     # Option contracts and quotes
-│   └── stocks.py      # Stock quotes and helpers
+│   └── stocks.py      # Stock quotes and related helpers
 ├── cli/               # Authentication CLI
 │   ├── login.py
 │   ├── logout.py
 │   ├── main.py        # Defines the `enode` CLI entrypoint
 │   └── whoami.py
 ├── client.py          # Sends SQL → API Gateway → Lambda → RDS
-├── config.py          # Loads/stores ~/.enode/credentials
+├── config.py          # Loads/stores `~/.enode/credentials`
 ├── errors.py          # Custom exception types
-├── sql/               # SQL query builders
+├── sql/               # SQL query builders for stocks/options/candles
 ├── utils/             # DataFrame helpers, validation
 ├── pyproject.toml
 └── uv.lock
+```
 
+---
 
-
-🔐 Authentication & Credentials
+## 🔐 Authentication & Credentials
 
 Each team member authenticates once using the CLI:
 
+```bash
 enode login
+```
 
 You will be prompted for:
 
-API URL (our API Gateway endpoint)
-
-API Key (hidden input)
-
+- **API URL** (our API Gateway endpoint)
+- **API Key** (hidden input)
 
 Credentials are stored securely in:
 
-```python
+```
 ~/.enode/credentials
 ```
 
-
 Check the current login:
 
-```python
+```bash
 enode whoami
 ```
 
-
 Log out:
 
-```python
+```bash
 enode logout
 ```
 
+This keeps our fund's data secure while staying simple for everyone.
 
-This keeps our fund’s data secure while staying simple for everyone.
+---
 
+## 🧪 Quick Start
 
-🧪 Quick Start
-1. Install
+### 1. Install
 
-From PyPI :
-```python
+From PyPI:
+
+```bash
 pip install enode-quant
 ```
+
 or
-```python
-uv add enode-quant #if using uv (recommended)
+
+```bash
+uv add enode-quant  # if using uv (recommended)
 ```
 
+### 2. Fetch Stock Quotes
 
-
-2. Fetch Stock Quotes
 ```python
 from enode_quant.api.stocks import get_stock_quotes
 
@@ -131,8 +126,8 @@ df = get_stock_quotes(
 print(df.head())
 ```
 
+### 3. Fetch Option Contracts
 
-3. Fetch Option Contracts
 ```python
 from enode_quant.api.options import get_option_contracts
 
@@ -146,8 +141,8 @@ contracts = get_option_contracts(
 print(contracts.head())
 ```
 
+### 4. Fetch Candles (OHLCV)
 
-4. Fetch Candles (OHLCV)
 ```python
 from enode_quant.api.candles import get_stock_candles
 
@@ -163,112 +158,93 @@ candles = get_stock_candles(
 print(candles.head())
 ```
 
-
 All high-level functions support flexible filters, such as:
 
-symbol or stock_id
+- `symbol` or `stock_id`
+- `start_date` and `end_date`
+- `option_type` (call / put / both)
+- expiration windows
+- `resolution` (for candles)
+- `limit`
+- `as_dataframe` (True/False)
 
-start_date and end_date
+---
 
-option_type (call / put / both)
-
-expiration windows
-
-resolution (for candles)
-
-limit
-
-as_dataframe (True/False)
-
-
-🧱 How the SDK Works (Short Version)
-
+## 🧱 How the SDK Works (Short Version)
 
 When you call something like:
+
 ```python
 get_stock_quotes("AAPL")
 ```
 
 internally the SDK:
 
-Loads your credentials from ~/.enode/credentials
-
-Builds a safe SQL query (using the sql helpers)
-
-Sends the query to API Gateway via HTTP
-
-API Gateway triggers the Lambda DB worker
-
-Lambda executes the query on PostgreSQL (RDS)
-
-The result is returned as JSON and (optionally) converted into a pandas DataFrame
+1. Loads your credentials from `~/.enode/credentials`
+2. Builds a safe SQL query (using the `sql` helpers)
+3. Sends the query to API Gateway via HTTP
+4. API Gateway triggers the Lambda DB worker
+5. Lambda executes the query on PostgreSQL (RDS)
+6. The result is returned as JSON and (optionally) converted into a pandas DataFrame
 
 Errors are mapped to clear Python exceptions:
 
-MissingCredentialsError
+- `MissingCredentialsError`
+- `AuthenticationError`
+- `APIConnectionError`
+- `ServerError`
 
-AuthenticationError
+So researchers don't have to debug HTTP or SQL directly.
 
-APIConnectionError
+---
 
-ServerError
+## 🧰 Available Modules
 
-So researchers don’t have to debug HTTP or SQL directly.
+### Stocks (`enode_quant.api.stocks`)
 
+- `get_stock_quotes(...)`
 
-🧰 Available Modules
-Stocks (enode_quant.api.stocks)
+### Options (`enode_quant.api.options`)
 
-get_stock_quotes(...)
+- `get_option_contracts(...)`
+- `get_option_quotes(...)`
 
-Options (enode_quant.api.options)
+### Candles (`enode_quant.api.candles`)
 
-get_option_contracts(...)
+- `get_stock_candles(...)`
 
-get_option_quotes(...)
+### Core
 
-Candles (enode_quant.api.candles)
+- `run_query(sql)` – low-level query runner (normally not needed by beginners)
+- `sql_literal(...)` – helper for building safe SQL values
+- `apply_date_filters(...)` – shared date filter helper
 
-get_stock_candles(...)
+### CLI
 
-Core
+- `enode login`
+- `enode whoami`
+- `enode logout`
 
-run_query(sql) – low-level query runner (normally not needed by beginners)
+---
 
-sql_literal(...) – helper for building safe SQL values
+## 🎯 Design Principles (for the ENODE Quant Team)
 
-apply_date_filters(...) – shared date filter helper
-
-CLI
-```python
-enode login
-
-enode whoami
-
-enode logout
-```
-
-
-🎯 Design Principles (for the ENODE Quant Team)
-
-Beginner-friendly – new members can get data with just a few lines of Python
-
-Flexible – advanced users can control filters and parameters
-
-Safe – validated inputs and no raw SQL from users
-
-Extensible – easy to add new functions as our database grows
+- **Beginner-friendly** – new members can get data with just a few lines of Python
+- **Flexible** – advanced users can control filters and parameters
+- **Safe** – validated inputs and no raw SQL from users
+- **Extensible** – easy to add new functions as our database grows
 
 Planned future extensions (not implemented yet, but on the roadmap):
 
-A backtesting module that uses the same data layer
+- A backtesting module that uses the same data layer
+- A quant-finance utilities module (risk, stats, indicators) for research
 
-A quant-finance utilities module (risk, stats, indicators) for research
+---
 
-
+## 🛠️ Troubleshooting
 
 | Problem           | Error                     | Solution                    |
-| ----------------- | ------------------------- | --------------------------- |
+|-------------------|---------------------------|-----------------------------|
 | Not logged in     | `MissingCredentialsError` | Run `enode login`           |
 | Wrong API key     | `AuthenticationError`     | Re-run `enode login`        |
 | Bad URL / network | `APIConnectionError`      | Check URL and connectivity  |
