@@ -10,3 +10,6 @@ wheels/
 .venv
 __pycache__/
 .env
+
+*.ipynb
+
