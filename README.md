@@ -19,6 +19,10 @@ Example:
 get_stock_quotes("AAPL")
 get_option_contracts("AAPL", option_type="call")
 get_stock_candles("AAPL")
+```
+
+
+
 
 The SDK provides:
 
@@ -40,23 +44,26 @@ Designed to be usable by both beginners and more advanced quants in the ENODE te
 
 🌳 Project Structure
 
+
 enode_quant/
 ├── api/               # High-level data access
-│   ├── candles.py     # Candle/OHLCV-related helpers
+│   ├── candles.py     # Candle/OHLCV helpers
 │   ├── options.py     # Option contracts and quotes
-│   └── stocks.py      # Stock quotes and related helpers
+│   └── stocks.py      # Stock quotes and helpers
 ├── cli/               # Authentication CLI
 │   ├── login.py
 │   ├── logout.py
 │   ├── main.py        # Defines the `enode` CLI entrypoint
 │   └── whoami.py
 ├── client.py          # Sends SQL → API Gateway → Lambda → RDS
-├── config.py          # Loads/stores `~/.enode/credentials`
+├── config.py          # Loads/stores ~/.enode/credentials
 ├── errors.py          # Custom exception types
-├── sql/               # SQL query builders for stocks/options/candles
+├── sql/               # SQL query builders
 ├── utils/             # DataFrame helpers, validation
 ├── pyproject.toml
 └── uv.lock
+
+
 
 🔐 Authentication & Credentials
 
@@ -73,17 +80,23 @@ API Key (hidden input)
 
 Credentials are stored securely in:
 
+```python
 ~/.enode/credentials
+```
 
 
 Check the current login:
 
+```python
 enode whoami
+```
 
 
 Log out:
 
+```python
 enode logout
+```
 
 
 This keeps our fund’s data secure while staying simple for everyone.
@@ -93,18 +106,18 @@ This keeps our fund’s data secure while staying simple for everyone.
 1. Install
 
 From PyPI :
-
+```python
 pip install enode-quant
-
+```
 or
-
+```python
 uv add enode-quant #if using uv (recommended)
-
+```
 
 
 
 2. Fetch Stock Quotes
-
+```python
 from enode_quant.api.stocks import get_stock_quotes
 
 df = get_stock_quotes(
@@ -116,11 +129,11 @@ df = get_stock_quotes(
 )
 
 print(df.head())
-
+```
 
 
 3. Fetch Option Contracts
-
+```python
 from enode_quant.api.options import get_option_contracts
 
 contracts = get_option_contracts(
@@ -131,11 +144,11 @@ contracts = get_option_contracts(
 )
 
 print(contracts.head())
-
+```
 
 
 4. Fetch Candles (OHLCV)
-
+```python
 from enode_quant.api.candles import get_stock_candles
 
 candles = get_stock_candles(
@@ -148,7 +161,7 @@ candles = get_stock_candles(
 )
 
 print(candles.head())
-
+```
 
 
 All high-level functions support flexible filters, such as:
@@ -172,9 +185,9 @@ as_dataframe (True/False)
 
 
 When you call something like:
-
+```python
 get_stock_quotes("AAPL")
-
+```
 
 internally the SDK:
 
@@ -227,13 +240,13 @@ sql_literal(...) – helper for building safe SQL values
 apply_date_filters(...) – shared date filter helper
 
 CLI
-
+```python
 enode login
 
 enode whoami
 
 enode logout
-
+```
 
 
 🎯 Design Principles (for the ENODE Quant Team)
@@ -260,4 +273,3 @@ A quant-finance utilities module (risk, stats, indicators) for research
 | Wrong API key     | `AuthenticationError`     | Re-run `enode login`        |
 | Bad URL / network | `APIConnectionError`      | Check URL and connectivity  |
 | Schema mismatch   | `ServerError`             | Update SDK or fix the query |
-
