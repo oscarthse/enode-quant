@@ -17,6 +17,8 @@ The Enode Quant SDK lets researchers work with market data using simple Python f
 Example:
 
 ```python
+from enode_quant import get_stock_quotes, get_option_contracts
+
 get_stock_quotes("AAPL")
 get_option_contracts("AAPL", option_type="call")
 get_stock_candles("AAPL")
@@ -39,22 +41,38 @@ Designed to be usable by both beginners and more advanced quants in the ENODE te
 
 ```
 enode_quant/
-├── api/               # High-level data access
-│   ├── candles.py     # Candle/OHLCV-related helpers
-│   ├── options.py     # Option contracts and quotes
-│   └── stocks.py      # Stock quotes and related helpers
-├── cli/               # Authentication CLI
+├── __init__.py            # Public shortcuts (lazy imports)
+│
+├── api/                   # High-level data access (researcher-facing)
+│   ├── candles.py         # Stock OHLCV / candles helper functions
+│   ├── options.py         # Option contracts & option quotes
+│   └── stocks.py          # Stocks, L1 quotes, stock metadata
+│
+├── cli/                   # Authentication CLI (`enode login`, `whoami`)
 │   ├── login.py
 │   ├── logout.py
-│   ├── main.py        # Defines the `enode` CLI entrypoint
+│   ├── main.py            # Defines the `enode` CLI entrypoint
 │   └── whoami.py
-├── client.py          # Sends SQL → API Gateway → Lambda → RDS
-├── config.py          # Loads/stores `~/.enode/credentials`
-├── errors.py          # Custom exception types
-├── sql/               # SQL query builders for stocks/options/candles
-├── utils/             # DataFrame helpers, validation
-├── pyproject.toml
-└── uv.lock
+│
+├── client.py              # Core HTTP client → API Gateway → Lambda → RDS
+├── config.py              # Loads/stores ~/.enode/credentials
+├── errors.py              # Custom SDK exception classes
+│
+├── sql/                   # SQL query builders
+│   ├── option_queries.py
+│   ├── stock_queries.py
+│   └── utils.py
+│
+└── utils/                 # Internal helpers
+    ├── df_helpers.py      # Convert raw rows → pandas DataFrame
+    └── validation.py      # Validation for symbols, dates, limits, etc.
+
+# Top-level project files
+├── pyproject.toml         # Package metadata & dependencies
+├── README.md              # Main SDK documentation
+├── DATABASE_SCHEMA.md     # Internal description of the market schema
+└── test.ipynb             # Local notebook for testing the SDK
+
 ```
 
 ---
@@ -113,7 +131,7 @@ uv add enode-quant  # if using uv (recommended)
 ### 2. Fetch Stock Quotes
 
 ```python
-from enode_quant.api.stocks import get_stock_quotes
+from enode_quant import get_stock_quotes
 
 df = get_stock_quotes(
     symbol="AAPL",
@@ -129,7 +147,7 @@ print(df.head())
 ### 3. Fetch Option Contracts
 
 ```python
-from enode_quant.api.options import get_option_contracts
+from enode_quant import get_option_contracts
 
 contracts = get_option_contracts(
     symbol="AAPL",
@@ -144,7 +162,7 @@ print(contracts.head())
 ### 4. Fetch Candles (OHLCV)
 
 ```python
-from enode_quant.api.candles import get_stock_candles
+from enode_quant import get_stock_candles
 
 candles = get_stock_candles(
     symbol="AAPL",

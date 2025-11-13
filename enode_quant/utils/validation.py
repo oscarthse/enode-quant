@@ -12,6 +12,7 @@ Every function returns a normalized value (e.g., uppercase symbol)
 or raises InvalidQueryError.
 """
 
+
 from __future__ import annotations
 
 import math

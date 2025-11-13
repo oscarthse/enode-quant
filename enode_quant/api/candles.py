@@ -44,7 +44,6 @@ DataRows = List[Dict[str, Any]]
 
 __all__ = ["get_stock_candles"]
 
-
 def get_stock_candles(
     symbol: Optional[str] = None,
     stock_id: Optional[int] = None,
