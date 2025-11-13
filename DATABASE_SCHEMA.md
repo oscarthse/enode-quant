@@ -28,21 +28,13 @@
 - `close` (float)
 - `day_volume` (int)
 
-## Not Available ❌
-
-### market.option_contract
-**Status:** Table does not exist in database schema
-**Impact:** `get_option_contracts()` will fail
-
-### market.option_quotes
-**Status:** Table does not exist in database schema
-**Impact:** `get_option_quotes()` will fail
-
 ## Working Functions
 
 ✅ `get_stocks()` - Fetch stock symbols
 ✅ `get_stock_quotes()` - Fetch stock quotes
 ✅ `get_stock_candles()` - Fetch OHLCV candles
+✅ `get_option_contracts()` - Fetch option contracts
+✅ `get_option_quotes()` - Fetch option quotes
 
 ## Non-Working Functions
 
@@ -51,7 +43,7 @@
 
 ## Notes
 
-**The database schema only supports stock data.** 
+**The database schema only supports stock data.**
 
 The SDK includes options functionality (`get_option_contracts()`, `get_option_quotes()`), but these functions cannot be used because the required database tables (`market.option_contract`, `market.option_quotes`) do not exist in your database schema.
 
